@@ -18,8 +18,7 @@ describe("ReturnBookHandler", () => {
             book1,
             member1,
         );
-        expect(returnBookOutcome).toBeInstanceOf(Penalty);
-        expect(returnBookOutcome?.fees.amount).toEqual(0);
+        expect(returnBookOutcome).toBeUndefined()
     });
     test("should generate a penalty from a delay", async () => {
         const book1 = new Book("first book");

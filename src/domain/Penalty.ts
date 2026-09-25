@@ -7,14 +7,12 @@ export default class Penalty {
     #id: string;
     #isPaid: boolean = false;
     #loanId: string;
-    #loanDueDate: DueDate;
     #memberId: MemberId;
     #fees: Money;
-    constructor(loanId: string, loanDueDate: DueDate, memberId: MemberId) {
+    constructor(loanId: string, memberId: MemberId, differenceInDays: number) {
         this.#loanId = loanId;
-        this.#loanDueDate = loanDueDate;
         this.#memberId = memberId;
-        this.#fees = this.#calculateFee();
+        this.#fees = new Money(differenceInDays, Currency.EUR);
         this.#id = crypto.randomUUID();
     }
     pay(money: Money) {
@@ -45,11 +43,6 @@ export default class Penalty {
     }
     get id() {
         return this.#id;
-    }
-    #calculateFee() {
-        const now = new Date();
-        const nbDays = differenceInDays(now, this.#loanDueDate.value);
-        return new Money(Math.max(nbDays, 0), Currency.EUR);
     }
     static calculateFees(penalties: Penalty[]) {
         const fees = penalties.reduce(

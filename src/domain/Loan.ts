@@ -1,7 +1,7 @@
 import BookId from "./BookId";
 import DueDate from "./DueDate";
 import MemberId from "./MemberId";
-import { addDays } from "date-fns";
+import { addDays, differenceInDays } from "date-fns";
 import Penalty from "./Penalty";
 
 export default class Loan {
@@ -33,9 +33,10 @@ export default class Loan {
     get bookId() {
         return this.#bookId;
     }
-    isOverdue() {
-        const currentDate = new Date();
-        return this.#dueDate.isBefore(new DueDate(currentDate));
+    #calculateDifferenceInDays() {
+        const now = new Date();
+        const nbDays = differenceInDays(now, this.#dueDate.value);
+        return Math.max(nbDays, 0)
     }
     close() {
         if (this.#isActive === true) {
@@ -45,8 +46,9 @@ export default class Loan {
         throw new Error("ERR_LOAN_ALREADY_COMPLETED");
     }
     createPenalty() {
-        if (this.#isActive && this.isOverdue()) {
-            return new Penalty(this.#id, this.#dueDate, this.#memberId);
+        const nbDaysFromDueDate = this.#calculateDifferenceInDays()
+        if (this.#isActive && nbDaysFromDueDate > 0) {
+            return new Penalty(this.#id, this.#memberId, nbDaysFromDueDate);
         }
     }
 }
