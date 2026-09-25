@@ -18,7 +18,7 @@ describe("ReturnBookHandler", () => {
             book1,
             member1,
         );
-        expect(returnBookOutcome).toBeUndefined()
+        expect(returnBookOutcome).toBeUndefined();
     });
     test("should generate a penalty from a delay", async () => {
         const book1 = new Book("first book");

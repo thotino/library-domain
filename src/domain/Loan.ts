@@ -36,7 +36,7 @@ export default class Loan {
     #calculateDifferenceInDays() {
         const now = new Date();
         const nbDays = differenceInDays(now, this.#dueDate.value);
-        return Math.max(nbDays, 0)
+        return Math.max(nbDays, 0);
     }
     close() {
         if (this.#isActive === true) {
@@ -46,7 +46,7 @@ export default class Loan {
         throw new Error("ERR_LOAN_ALREADY_COMPLETED");
     }
     createPenalty() {
-        const nbDaysFromDueDate = this.#calculateDifferenceInDays()
+        const nbDaysFromDueDate = this.#calculateDifferenceInDays();
         if (this.#isActive && nbDaysFromDueDate > 0) {
             return new Penalty(this.#id, this.#memberId, nbDaysFromDueDate);
         }
