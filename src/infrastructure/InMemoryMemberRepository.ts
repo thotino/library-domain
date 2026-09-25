@@ -7,7 +7,15 @@ export class MemberRepository implements MemberRepositoryInterface {
     constructor() {
         this.#members = new Array<Member>();
     }
-    save(member: Member) {}
+    save(member: Member) {
+        const index = this.#members.findIndex(existingMember =>
+            existingMember.id.equals(member.id),
+        );
+
+        if (index !== -1) {
+            this.#members[index] = member;
+        }
+    }
     async create(member: Member) {
         return this.#members.push(member);
     }

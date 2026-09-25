@@ -1,7 +1,5 @@
-import { differenceInDays } from "date-fns";
 import MemberId from "./MemberId";
 import Money, { Currency } from "./Money";
-import DueDate from "./DueDate";
 
 export default class Penalty {
     #id: string;

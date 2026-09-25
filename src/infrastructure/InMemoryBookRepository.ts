@@ -7,7 +7,15 @@ export class BookRepository implements BookRepositoryInterface {
     constructor() {
         this.#books = new Array<Book>();
     }
-    save(book: Book) {}
+    async save(book: Book) {
+        const index = this.#books.findIndex(existingBook =>
+            existingBook.id.equals(book.id),
+        );
+
+        if (index !== -1) {
+            this.#books[index] = book;
+        }
+    }
     async create(book: Book) {
         return this.#books.push(book);
     }

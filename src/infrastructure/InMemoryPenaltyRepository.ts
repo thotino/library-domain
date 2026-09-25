@@ -7,7 +7,15 @@ export class PenaltyRepository implements PenaltyRepositoryInterface {
     constructor() {
         this.#penalties = new Array<Penalty>();
     }
-    save(penalty: Penalty) {}
+    save(penalty: Penalty) {
+        const index = this.#penalties.findIndex(
+            existingPenalty => existingPenalty.id === penalty.id,
+        );
+
+        if (index !== -1) {
+            this.#penalties[index] = penalty;
+        }
+    }
     async create(penalty: Penalty) {
         return this.#penalties.push(penalty);
     }

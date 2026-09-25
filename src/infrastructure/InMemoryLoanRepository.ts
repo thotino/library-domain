@@ -8,7 +8,15 @@ export class LoanRepository implements LoanRepositoryInterface {
     constructor() {
         this.#loans = new Array<Loan>();
     }
-    save(loan: Loan) {}
+    async save(loan: Loan) {
+        const index = this.#loans.findIndex(
+            existingLoan => existingLoan.id === loan.id,
+        );
+
+        if (index !== -1) {
+            this.#loans[index] = loan;
+        }
+    }
     async create(loan: Loan) {
         return this.#loans.push(loan);
     }
