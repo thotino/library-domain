@@ -11,14 +11,6 @@ export class PayPenaltyHandler {
     static async checkMemberPenalties(member: Member, penalties: Penalty[]) {
         return member.applyPenalties(penalties);
     }
-    static paySinglePenalty(penalty: Penalty, money: Money) {
-        if (!penalty.isPaid && money.isGreaterThanOrEqual(penalty.fees)) {
-            penalty.markAsPaid();
-            return money.subtract(penalty.fees);
-        } else {
-            return money;
-        }
-    }
     static async handle(
         penalties: Penalty[],
         paidMoney: Money,
@@ -26,7 +18,7 @@ export class PayPenaltyHandler {
     ) {
         let change = paidMoney;
         for (const penalty of penalties) {
-            change = PayPenaltyHandler.paySinglePenalty(penalty, change);
+            change = penalty.pay(change);
         }
         return member.applyPenalties(penalties);
     }
@@ -42,8 +34,8 @@ export class PayPenaltyUseCase {
             throw new Error("ERR_MEMBER_NOT_FOUND");
         }
         const penalties = await penaltyRepository.findByMemberId(member.id);
-        // await PayPenaltyHandler.checkMemberPenalties(member, penalties);
         await PayPenaltyHandler.handle(penalties, paidMoney, member);
-        // await PayPenaltyHandler.checkMemberPenalties(member, penalties)
+        await memberRepository.save(member);
+        await penaltyRepository.save(penalties);
     }
 }

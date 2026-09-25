@@ -36,7 +36,14 @@ export default class Member {
         this.#incrementActiveLoans();
         return new Loan(this.#id, book.id);
     }
-    returnLoan(loan: Loan, book: Book) {
+    handleLoanClosing(loan: Loan, book: Book) {
+        const eventualPenalty = this.#returnLoan(loan, book);
+        if (eventualPenalty != null) {
+            this.applyPenalties([eventualPenalty]);
+        }
+        return eventualPenalty;
+    }
+    #returnLoan(loan: Loan, book: Book) {
         if (
             !loan.isActive ||
             !loan.memberId.equals(this.#id) ||

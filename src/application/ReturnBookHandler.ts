@@ -11,11 +11,7 @@ import {
 
 export class ReturnBookHandler {
     static async handle(loan: Loan, book: Book, member: Member) {
-        const returnLoanOutcome = member.returnLoan(loan, book);
-        if (returnLoanOutcome != null) {
-            member.applyPenalties([returnLoanOutcome]);
-        }
-        return returnLoanOutcome;
+        return member.handleLoanClosing(loan, book);
     }
 }
 

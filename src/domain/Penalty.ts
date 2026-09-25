@@ -17,7 +17,14 @@ export default class Penalty {
         this.#fees = this.#calculateFee();
         this.#id = crypto.randomUUID();
     }
-    markAsPaid() {
+    pay(money: Money) {
+        if (!this.#isPaid && money.isGreaterThanOrEqual(this.#fees)) {
+            this.#markAsPaid();
+            return money.subtract(this.#fees);
+        }
+        return money;
+    }
+    #markAsPaid() {
         if (this.#isPaid == false) {
             this.#isPaid = true;
             return;
