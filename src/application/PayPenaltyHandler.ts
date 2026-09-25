@@ -2,10 +2,8 @@ import Member from "../domain/Member";
 import MemberId from "../domain/MemberId";
 import Money, { Currency } from "../domain/Money";
 import Penalty from "../domain/Penalty";
-import {
-    memberRepository,
-    penaltyRepository,
-} from "../infrastructure/InMemoryRepositories";
+import { MemberRepositoryInterface } from "../domain/repositories/MemberRepository";
+import { PenaltyRepositoryInterface } from "../domain/repositories/PenaltyRepository";
 
 export class PayPenaltyHandler {
     static async checkMemberPenalties(member: Member, penalties: Penalty[]) {
@@ -25,17 +23,23 @@ export class PayPenaltyHandler {
 }
 
 export class PayPenaltyUseCase {
-    static async execute(memberId: string, paidAmount: number) {
+    constructor(
+        readonly memberRepository: MemberRepositoryInterface,
+        readonly penaltyRepository: PenaltyRepositoryInterface,
+    ) {}
+    async execute(memberId: string, paidAmount: number) {
         const paidMoney = new Money(paidAmount, Currency.EUR);
-        const member = await memberRepository.findOne(
+        const member = await this.memberRepository.findOne(
             MemberId.fromString(memberId),
         );
         if (member == null) {
             throw new Error("ERR_MEMBER_NOT_FOUND");
         }
-        const penalties = await penaltyRepository.findByMemberId(member.id);
+        const penalties = await this.penaltyRepository.findByMemberId(
+            member.id,
+        );
         await PayPenaltyHandler.handle(penalties, paidMoney, member);
-        await memberRepository.save(member);
-        await penaltyRepository.save(penalties);
+        await this.memberRepository.save(member);
+        await this.penaltyRepository.save(penalties);
     }
 }
